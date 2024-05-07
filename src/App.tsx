@@ -1,24 +1,46 @@
-import logo from './logo.svg';
-import './App.css';
+/* eslint-disable no-undef */
+import { useEffect, useRef, useState } from 'react';
 
 function App() {
+  const timerIdRef = useRef<NodeJS.Timer | null | number>(null);
+  const [timer, setTimer] = useState<number>(0);
+  const [check, setCheck] = useState<boolean>(false);
+  const startHandler = () => {
+    if (!check) {
+      setCheck(true);
+      timerIdRef.current = setInterval(() => {
+        setTimer((timer) => timer + 1);
+      }, 1000);
+    }
+  };
+
+  const stopHandler = () => {
+    setCheck(false);
+    clearInterval(timerIdRef.current as number);
+  };
+  const resetHandler = () => {
+    setCheck(false);
+
+    clearInterval(timerIdRef.current as number);
+    setTimer(0);
+  };
+
+  useEffect(() => {
+    return () => {
+      clearInterval(timerIdRef.current as number);
+    };
+  }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <div className="App">
+        <div className="container">
+          <p>Giá trị của time: {timer}</p>
+          <button onClick={startHandler}>Start</button>
+          <button onClick={stopHandler}>Stop</button>
+          <button onClick={resetHandler}>Reset</button>
+        </div>
+      </div>
+    </>
   );
 }
 
